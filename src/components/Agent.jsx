@@ -8,7 +8,7 @@ const Agent = ({message})=>{
                 <div className="font-bold">Assistant</div>
                 <div className="text-sm text-muted-foreground">2:39pm</div>
               </div>
-              <div>
+              <div className="max-w-md">
                 <p>{message}</p>
               </div>
             </div>

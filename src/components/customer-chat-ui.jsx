@@ -1,20 +1,29 @@
 "use client"
-
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Agent from "@/components/Agent"
 import User from "@/components/User"
 import { useState, useRef, useEffect } from "react"
+import { ModeToggle } from "./ModeToggle"
+import { UserContext } from "@/context/AuthContext"
+import { LogOut } from "lucide-react"
+import { useRouter } from "next/navigation"
 export function CustomerChatUI() {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: "Hi! I'm the Daglore Schools support assistant. How can I help you today?",
+      content: "Hi! I'm the Living Well Hospital support assistant. How can I help you today?",
     },
   ])
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false)
-
+  const router = useRouter();
+  const {user, logOut} = UserContext();
+  useEffect(()=>{
+    if(!user){
+      router.push("/login")
+    }
+  })
   const sendMessage = async () => {
     if (!message.trim() || isLoading) return;
     setIsLoading(true)  // Don't send empty messages
@@ -101,12 +110,16 @@ export function CustomerChatUI() {
           <Button variant="ghost" size="icon">
             <SettingsIcon className="w-5 h-5 text-muted-foreground" />
           </Button>
+          <ModeToggle/>
+          <Button onClick={logOut}>
+            <LogOut/>
+          </Button>
         </div>
       </header>
       <div className="flex-1 overflow-y-auto p-6 space-y-8">
         {/* Add Agent or User */}
         {messages.map((message, index)=>(
-          message.role === 'assistant' ? <Agent key={index} message={message.content} /> : <User key={index} message={message.content} />
+          message.role === 'assistant' ? <Agent key={index} message={message.content} /> : <User key={index} message={message.content} name={user? user.displayName : "you"} image={user? user.photoURL : ""} />
         ))}
         <div ref={messagesEndRef}></div>
       </div>
